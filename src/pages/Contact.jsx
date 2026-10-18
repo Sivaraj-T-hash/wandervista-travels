@@ -2,12 +2,15 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import {
   Send, CheckCircle2, MapPin, Phone, Mail, Clock, ShieldCheck,
-  Compass, Sparkles, AlertCircle, ArrowRight, RotateCcw, Printer
+  Compass, Sparkles, AlertCircle, ArrowRight, RotateCcw, Printer,
+  FileText, Search
 } from 'lucide-react';
 import { destinations } from '../data/destinations';
 import { packages } from '../data/packages';
 import { faqs } from '../data/faqs';
 import FAQAccordion from '../components/FAQAccordion';
+import BookingInvoice from '../components/BookingInvoice';
+import { saveInquiry } from '../utils/inquiryStorage';
 import './Contact.css';
 
 const TRAVEL_STYLES = [
@@ -67,6 +70,8 @@ export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedData, setSubmittedData] = useState(null);
   const [confirmationCode, setConfirmationCode] = useState('');
+  const [submittedInvoice, setSubmittedInvoice] = useState(null);
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
 
   // Pre-fill from query params if available
   useEffect(() => {
@@ -163,8 +168,76 @@ export default function Contact() {
     setIsSubmitting(true);
     setTimeout(() => {
       const code = `WV-${Math.floor(10000 + Math.random() * 90000)}`;
+      const adults = parseInt(formData.adults, 10) || 1;
+      const children = parseInt(formData.children, 10) || 0;
+
+      let unitRate = 690;
+      let matchedInclusions = null;
+      let matchedExclusions = null;
+      let resolvedPkgName = '';
+
+      if (formData.packageSlug) {
+        const pkg = packages.find((p) => p.slug === formData.packageSlug);
+        if (pkg) {
+          unitRate = pkg.pricePerPerson || 690;
+          matchedInclusions = pkg.inclusions;
+          matchedExclusions = pkg.exclusions;
+          resolvedPkgName = pkg.name;
+        }
+      } else if (formData.destination) {
+        const dest = destinations.find(
+          (d) => d.name.toLowerCase() === formData.destination.toLowerCase() || d.slug === formData.destination.toLowerCase()
+        );
+        if (dest) {
+          unitRate = dest.startingPrice || 690;
+          resolvedPkgName = `${dest.name} Custom Journey`;
+        }
+      }
+
+      const adultTotal = adults * unitRate;
+      const childUnitRate = Math.round(unitRate * 0.7);
+      const childTotal = children * childUnitRate;
+      const subtotal = adultTotal + childTotal;
+      const taxAmount = Math.round(subtotal * 0.05);
+      const grandTotal = subtotal + taxAmount;
+
+      const invoiceRecord = {
+        id: code,
+        confirmationCode: code,
+        type: 'trip_enquiry',
+        createdAt: new Date().toISOString(),
+        dateFormatted: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        destination: formData.destination,
+        packageSlug: formData.packageSlug,
+        packageName: resolvedPkgName || `${formData.destination} Tailored Journey`,
+        travelStyle: formData.travelStyle,
+        timeline: formData.timeline,
+        duration: DURATION_OPTIONS.find((d) => d.value === formData.duration)?.label || formData.duration,
+        adults,
+        children,
+        totalTravelers: adults + children,
+        ratePerPerson: unitRate,
+        adultSubtotal: adultTotal,
+        childSubtotal: childTotal,
+        subtotal,
+        taxAmount,
+        grandTotal,
+        notes: formData.notes,
+        inclusions: matchedInclusions,
+        exclusions: matchedExclusions,
+        status: 'In Review by Destination Specialist',
+        reviewer: 'Sarah Jenkins (Senior Itinerary Designer)',
+        eta: 'Our experts will contact you within 24 hours',
+        details: 'We are curating your complete worry-free itinerary — arranging your accommodations, travel (bus, flight, cab), and delicious dining so you can enjoy without thinking about travel logistics.'
+      };
+
+      saveInquiry(invoiceRecord);
       setConfirmationCode(code);
-      setSubmittedData({ ...formData });
+      setSubmittedInvoice(invoiceRecord);
+      setSubmittedData({ ...formData, ...invoiceRecord });
       setIsSubmitting(false);
       window.scrollTo({ top: 180, behavior: 'smooth' });
     }, 700);
@@ -172,6 +245,8 @@ export default function Contact() {
 
   const handleReset = () => {
     setSubmittedData(null);
+    setSubmittedInvoice(null);
+    setShowInvoiceModal(false);
     setConfirmationCode('');
     setFormData({
       fullName: '',
@@ -307,6 +382,15 @@ export default function Contact() {
                       </strong>
                     </div>
                     <div className="contact-confirm__item">
+                      <span className="contact-confirm__item-label">Estimated Expense</span>
+                      <strong className="contact-confirm__item-val" style={{ color: 'var(--color-forest-emerald)' }}>
+                        ${submittedData.grandTotal ? submittedData.grandTotal.toLocaleString() : '—'} USD
+                        <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--color-muted-text)', fontWeight: 500 }}>
+                          (${submittedData.ratePerPerson || 690}/person + 5% service & taxes)
+                        </span>
+                      </strong>
+                    </div>
+                    <div className="contact-confirm__item">
                       <span className="contact-confirm__item-label">Primary Contact</span>
                       <strong className="contact-confirm__item-val">{submittedData.email}</strong>
                     </div>
@@ -319,6 +403,42 @@ export default function Contact() {
                     </div>
                   )}
                 </div>
+
+                {/* Calculation Quick Breakdown */}
+                {submittedInvoice && (
+                  <div style={{
+                    backgroundColor: '#f7f6f0',
+                    border: '1.5px solid var(--color-emerald-20)',
+                    borderRadius: 'var(--radius-lg)',
+                    padding: 'var(--space-4) var(--space-6)',
+                    margin: 'var(--space-6) 0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: 'var(--space-3)'
+                  }}>
+                    <div>
+                      <div style={{ fontSize: '0.82rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-sage-green)', fontWeight: 700 }}>
+                        Professional Bill Summary Calculated
+                      </div>
+                      <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--color-forest-emerald)' }}>
+                        ${submittedInvoice.grandTotal.toLocaleString()} USD Total for {submittedInvoice.totalTravelers} Traveler{submittedInvoice.totalTravelers !== 1 ? 's' : ''}
+                      </div>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--color-deep-charcoal)' }}>
+                        All accommodations, transport (flight/cab/bus), dining & concierge care included.
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      className="btn btn-primary btn--sm"
+                      onClick={() => setShowInvoiceModal(true)}
+                      id="view-bill-preview-btn"
+                    >
+                      <FileText size={15} /> View Full Bill Details
+                    </button>
+                  </div>
+                )}
 
                 {/* Next Steps Timeline */}
                 <div className="contact-confirm__steps">
@@ -351,12 +471,26 @@ export default function Contact() {
                 {/* Actions */}
                 <div className="contact-confirm__actions">
                   <button
-                    className="btn btn-secondary btn--sm"
+                    className="btn btn-primary btn--sm"
                     onClick={() => window.print()}
                     id="confirm-print-btn"
                   >
-                    <Printer size={15} /> Print Summary
+                    <Printer size={15} /> Print Bill Summary
                   </button>
+                  <button
+                    className="btn btn-secondary btn--sm"
+                    onClick={() => setShowInvoiceModal(true)}
+                    id="confirm-preview-btn"
+                  >
+                    <FileText size={15} /> View Official Bill
+                  </button>
+                  <Link
+                    to={`/support?ref=${submittedInvoice?.id || confirmationCode}`}
+                    className="btn btn-outline btn--sm"
+                    id="confirm-support-track-btn"
+                  >
+                    <Search size={15} /> Track in Support
+                  </Link>
                   <button
                     className="btn btn-secondary btn--sm"
                     onClick={handleReset}
@@ -364,10 +498,30 @@ export default function Contact() {
                   >
                     <RotateCcw size={15} /> Plan Another Trip
                   </button>
-                  <Link to="/destinations" className="btn btn-primary btn--sm" id="confirm-dest-btn">
-                    Explore Destinations <ArrowRight size={15} />
-                  </Link>
                 </div>
+
+                {/* Inline Printable Invoice Container */}
+                {submittedInvoice && (
+                  <div style={{ marginTop: 'var(--space-8)' }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginBottom: 'var(--space-3)'
+                    }}>
+                      <h4 style={{ fontFamily: 'var(--font-heading)', color: 'var(--color-forest-emerald)', margin: 0 }}>
+                        Official Pro-Forma Travel Estimate & Bill
+                      </h4>
+                      <button
+                        className="btn btn-secondary btn--sm"
+                        onClick={() => window.print()}
+                      >
+                        <Printer size={14} /> Print Document
+                      </button>
+                    </div>
+                    <BookingInvoice data={submittedInvoice} />
+                  </div>
+                )}
               </div>
             ) : (
               <form
@@ -796,6 +950,14 @@ export default function Contact() {
           <FAQAccordion faqs={faqs.slice(0, 5)} />
         </section>
       </div>
+
+      {showInvoiceModal && submittedInvoice && (
+        <BookingInvoice
+          data={submittedInvoice}
+          isModal={true}
+          onClose={() => setShowInvoiceModal(false)}
+        />
+      )}
     </main>
   );
 }

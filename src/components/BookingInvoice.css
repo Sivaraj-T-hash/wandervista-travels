@@ -1,0 +1,503 @@
+/* =========================================
+   WANDERVISTA TRAVELS — PROFESSIONAL BILL INVOICE
+   Screen & Print Styles
+   ========================================= */
+
+.wv-invoice-wrapper {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-warm-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-10) var(--space-12);
+  margin: var(--space-6) 0;
+  color: #1a201c;
+  font-family: var(--font-body);
+}
+
+/* Modal wrapper if shown as popup */
+.wv-invoice-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(18, 30, 24, 0.75);
+  backdrop-filter: blur(6px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  overflow-y: auto;
+}
+
+.wv-invoice-modal {
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 860px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+  position: relative;
+  margin: auto;
+}
+
+.wv-invoice-modal__toolbar {
+  position: sticky;
+  top: 0;
+  background-color: #f7f5ef;
+  border-bottom: 1px solid #e2ddd0;
+  padding: var(--space-4) var(--space-8);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 10;
+}
+
+.wv-invoice-modal__toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.wv-invoice-modal__content {
+  padding: var(--space-10) var(--space-12);
+}
+
+/* Document Header */
+.wv-inv-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: var(--space-6);
+  border-bottom: 2px solid #214a3b;
+  margin-bottom: var(--space-6);
+}
+
+.wv-inv-brand {
+  display: flex;
+  flex-direction: column;
+}
+
+.wv-inv-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-heading);
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: #214a3b;
+  letter-spacing: -0.02em;
+}
+
+.wv-inv-logo-sub {
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #b69a62;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.wv-inv-company-meta {
+  font-size: 0.82rem;
+  color: #555e56;
+  line-height: 1.5;
+  margin-top: 8px;
+}
+
+.wv-inv-badge-wrap {
+  text-align: right;
+}
+
+.wv-inv-type-title {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #214a3b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.wv-inv-ref-badge {
+  display: inline-block;
+  background-color: #edf4f0;
+  border: 1px solid #214a3b;
+  color: #214a3b;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 4px 12px;
+  border-radius: 4px;
+  letter-spacing: 0.08em;
+}
+
+.wv-inv-date-row {
+  font-size: 0.82rem;
+  color: #555e56;
+  margin-top: 6px;
+}
+
+/* Info Grid: Client & Trip Details */
+.wv-inv-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  background-color: #fcfbf8;
+  border: 1px solid #e7e2d6;
+  border-radius: 8px;
+  padding: var(--space-5) var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+.wv-inv-block-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #849783;
+  font-weight: 700;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #e7e2d6;
+  padding-bottom: 4px;
+}
+
+.wv-inv-data-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.88rem;
+}
+
+.wv-inv-data-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.wv-inv-data-row span {
+  color: #636e65;
+}
+
+.wv-inv-data-row strong {
+  color: #1a201c;
+  font-weight: 600;
+  text-align: right;
+}
+
+/* Line-Item Calculation Table */
+.wv-inv-table-wrap {
+  margin-bottom: var(--space-8);
+}
+
+.wv-inv-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.wv-inv-table th {
+  background-color: #214a3b;
+  color: #ffffff;
+  padding: 10px 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+
+.wv-inv-table th.text-right {
+  text-align: right;
+}
+
+.wv-inv-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #e7e2d6;
+  color: #252a26;
+}
+
+.wv-inv-table td.text-right {
+  text-align: right;
+}
+
+.wv-inv-table tr:nth-child(even) {
+  background-color: #faf8f3;
+}
+
+.wv-inv-item-desc {
+  font-weight: 600;
+  color: #1a201c;
+}
+
+.wv-inv-item-sub {
+  font-size: 0.78rem;
+  color: #636e65;
+  margin-top: 3px;
+}
+
+.wv-inv-badge-inc {
+  display: inline-block;
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+/* Calculation summary */
+.wv-inv-calc-box {
+  width: 340px;
+  margin-left: auto;
+  border: 1px solid #e2ddd0;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: var(--space-8);
+}
+
+.wv-inv-calc-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 14px;
+  font-size: 0.88rem;
+  border-bottom: 1px solid #ede8de;
+}
+
+.wv-inv-calc-row span {
+  color: #555e56;
+}
+
+.wv-inv-calc-row strong {
+  color: #1a201c;
+}
+
+.wv-inv-calc-row--grand {
+  background-color: #214a3b;
+  color: #ffffff;
+  padding: 12px 14px;
+  border-bottom: none;
+}
+
+.wv-inv-calc-row--grand span {
+  color: #f5f1e7;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.wv-inv-calc-row--grand strong {
+  color: #ffffff;
+  font-size: 1.25rem;
+  font-family: var(--font-heading);
+}
+
+/* Inclusions & Exclusions Two-Column */
+.wv-inv-inc-exc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+.wv-inv-inc-card,
+.wv-inv-exc-card {
+  border-radius: 8px;
+  padding: var(--space-4) var(--space-5);
+  font-size: 0.84rem;
+}
+
+.wv-inv-inc-card {
+  background-color: #f2f7f4;
+  border: 1px solid #c9dfd4;
+}
+
+.wv-inv-exc-card {
+  background-color: #fbf7f5;
+  border: 1px solid #ebd7ce;
+}
+
+.wv-inv-inc-title {
+  color: #1e5a40;
+  font-weight: 700;
+  font-size: 0.86rem;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wv-inv-exc-title {
+  color: #92400e;
+  font-weight: 700;
+  font-size: 0.86rem;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wv-inv-inc-card ul,
+.wv-inv-exc-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.wv-inv-inc-card li {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  color: #252a26;
+  line-height: 1.35;
+}
+
+.wv-inv-exc-card li {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  color: #555e56;
+  line-height: 1.35;
+}
+
+.wv-inv-bullet-inc {
+  color: #2e7d32;
+  font-weight: 700;
+}
+
+.wv-inv-bullet-exc {
+  color: #b45309;
+  font-weight: 700;
+}
+
+/* Footer & Expert Promise */
+.wv-inv-footer {
+  border-top: 1.5px solid #214a3b;
+  padding-top: var(--space-5);
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--space-6);
+  font-size: 0.8rem;
+  color: #555e56;
+}
+
+.wv-inv-promise {
+  line-height: 1.5;
+}
+
+.wv-inv-promise strong {
+  display: block;
+  color: #214a3b;
+  font-size: 0.88rem;
+  margin-bottom: 4px;
+}
+
+.wv-inv-sign {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.wv-inv-sign-line {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 1.15rem;
+  color: #214a3b;
+}
+
+.wv-inv-sign-sub {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #849783;
+}
+
+/* =========================================
+   PRINT SPECIFIC RULES (@media print)
+   ========================================= */
+@media print {
+  /* Hide the rest of the web application */
+  header,
+  nav,
+  footer,
+  .site-header,
+  .site-footer,
+  .navbar,
+  .nav-desktop,
+  .nav-mobile,
+  .contact-banner,
+  .contact-guarantees,
+  .contact-faqs-section,
+  .contact-confirm__header,
+  .contact-confirm__summary,
+  .contact-confirm__steps,
+  .contact-confirm__actions,
+  .contact-form__intro,
+  .contact-sidebar,
+  .ai-travel-assistant,
+  .ai-travel-fab,
+  .wv-invoice-modal__toolbar,
+  button,
+  .btn {
+    display: none !important;
+  }
+
+  body,
+  html,
+  #root,
+  .contact-page,
+  .contact-body,
+  .contact-grid,
+  .contact-form-card,
+  .wv-invoice-modal-overlay,
+  .wv-invoice-modal {
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    position: static !important;
+    overflow: visible !important;
+  }
+
+  .wv-invoice-wrapper,
+  .wv-invoice-modal__content {
+    box-shadow: none !important;
+    border: none !important;
+    padding: 10mm 15mm !important;
+    margin: 0 !important;
+    display: block !important;
+  }
+
+  .wv-inv-header {
+    border-bottom: 2pt solid #214a3b !important;
+  }
+
+  .wv-inv-calc-row--grand {
+    background-color: #214a3b !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color: #ffffff !important;
+  }
+
+  .wv-inv-table th {
+    background-color: #214a3b !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color: #ffffff !important;
+  }
+
+  .wv-inv-inc-card,
+  .wv-inv-exc-card,
+  .wv-inv-grid {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  @page {
+    margin: 12mm;
+    size: auto;
+  }
+}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import {
   HelpCircle, Phone, Mail, Clock, MapPin, Search,
   CheckCircle2, AlertCircle, ShieldCheck, Hotel, Plane, Utensils,
@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { faqs } from '../data/faqs';
 import FAQAccordion from '../components/FAQAccordion';
+import { saveInquiry, findInquiryById } from '../utils/inquiryStorage';
 import './Support.css';
 
 const SUPPORT_TOPICS = [
@@ -19,7 +20,10 @@ const SUPPORT_TOPICS = [
 ];
 
 export default function Support() {
-  const [refInput, setRefInput] = useState('');
+  const [searchParams] = useSearchParams();
+  const queryRef = searchParams.get('ref') || '';
+
+  const [refInput, setRefInput] = useState(queryRef);
   const [refStatus, setRefStatus] = useState(null);
 
   const [ticketForm, setTicketForm] = useState({
@@ -32,24 +36,53 @@ export default function Support() {
   const [ticketErrors, setTicketErrors] = useState({});
   const [ticketSubmitted, setTicketSubmitted] = useState(false);
   const [isSubmittingTicket, setIsSubmittingTicket] = useState(false);
+  const [createdRef, setCreatedRef] = useState('');
+  const [lastSubmittedTicket, setLastSubmittedTicket] = useState(null);
 
   useEffect(() => {
     document.title = 'Client Support & Help Center — WanderVista Travels';
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
+    if (queryRef) {
+      setRefInput(queryRef);
+      handleTrackRef(null, queryRef);
+    }
+  }, [queryRef]);
 
-  const handleTrackRef = (e) => {
-    e.preventDefault();
-    if (!refInput.trim()) return;
+  const handleTrackRef = (e, overrideId) => {
+    if (e && e.preventDefault) e.preventDefault();
+    const idToLookup = (overrideId || refInput).trim();
+    if (!idToLookup) return;
 
-    const trimmed = refInput.trim().toUpperCase();
-    setRefStatus({
-      code: trimmed,
-      status: 'In Review by Destination Specialist',
-      expert: 'Sarah Jenkins (Senior Itinerary Designer)',
-      eta: 'Response within 24 hours guaranteed',
-      details: 'All accommodations, flights/cabs/bus transit, and dining preferences are currently being curated into your bespoke proposal.',
-    });
+    const trimmed = idToLookup.toUpperCase();
+    const found = findInquiryById(trimmed);
+
+    if (found) {
+      setRefStatus({
+        found: true,
+        code: found.id,
+        type: found.type === 'support_ticket' ? 'Concierge Support Request' : 'Trip Booking Enquiry',
+        name: found.fullName,
+        email: found.email,
+        phone: found.phone,
+        destination: found.destination,
+        package: found.packageName,
+        topic: found.topic,
+        travelers: found.totalTravelers ? `${found.totalTravelers} Traveler${found.totalTravelers !== 1 ? 's' : ''} (${found.adults} Adults${found.children > 0 ? `, ${found.children} Children` : ''})` : null,
+        totalAmount: found.grandTotal ? `$${found.grandTotal.toLocaleString()} USD` : null,
+        notes: found.notes || found.message,
+        date: found.dateFormatted || found.createdAt,
+        status: found.status || 'In Review by Destination Specialist',
+        expert: found.reviewer || 'Sarah Jenkins (Senior Itinerary Designer)',
+        eta: found.eta || 'Our experts will contact you within 24 hours',
+        details: found.details || 'All accommodations, flights/cabs/bus transit, and dining preferences are currently being curated into your bespoke proposal.',
+      });
+    } else {
+      setRefStatus({
+        found: false,
+        code: trimmed,
+        error: `No record found for Reference ID "${trimmed}". Please double-check your code from your confirmation or submit a new inquiry below.`,
+      });
+    }
   };
 
   const handleTicketSubmit = (e) => {
@@ -68,6 +101,26 @@ export default function Support() {
 
     setIsSubmittingTicket(true);
     setTimeout(() => {
+      const generatedRef = `WV-SUP-${Math.floor(10000 + Math.random() * 90000)}`;
+      const newTicket = {
+        id: generatedRef,
+        type: 'support_ticket',
+        createdAt: new Date().toISOString(),
+        dateFormatted: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+        fullName: ticketForm.name.trim(),
+        email: ticketForm.email.trim(),
+        topic: ticketForm.topic,
+        bookingRef: ticketForm.refId.trim(),
+        message: ticketForm.message.trim(),
+        status: 'In Review by Concierge Specialist',
+        reviewer: 'Marcus Vance (Senior Guest Relations Manager)',
+        eta: 'Guaranteed response within 24 hours',
+        details: `Your inquiry regarding "${ticketForm.topic}" has been logged into our concierge queue. Accommodations, transit arrangements (flights, private cabs, buses), and dietary meal requests are being verified.`
+      };
+
+      saveInquiry(newTicket);
+      setCreatedRef(generatedRef);
+      setLastSubmittedTicket(newTicket);
       setIsSubmittingTicket(false);
       setTicketSubmitted(true);
     }, 600);
@@ -129,16 +182,54 @@ export default function Support() {
             </form>
 
             {refStatus && (
-              <div className="support-status-result">
-                <div className="support-status-badge">
-                  <CheckCircle2 size={16} /> Status: {refStatus.status}
-                </div>
-                <div className="support-status-details">
-                  <p><strong>Reference:</strong> {refStatus.code}</p>
-                  <p><strong>Reviewer:</strong> {refStatus.expert}</p>
-                  <p><strong>Timeline:</strong> {refStatus.eta}</p>
-                  <p className="support-status-note">{refStatus.details}</p>
-                </div>
+              <div className={`support-status-result ${!refStatus.found ? 'support-status-result--error' : ''}`}>
+                {refStatus.found ? (
+                  <>
+                    <div className="support-status-badge">
+                      <CheckCircle2 size={16} /> Status: {refStatus.status}
+                    </div>
+                    <div className="support-status-details">
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: '8px',
+                        borderBottom: '1px solid var(--color-warm-border)',
+                        paddingBottom: '6px'
+                      }}>
+                        <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', color: 'var(--color-sage-green)', fontWeight: 700 }}>
+                          {refStatus.type}
+                        </span>
+                        <strong style={{ color: 'var(--color-forest-emerald)', letterSpacing: '0.05em' }}>{refStatus.code}</strong>
+                      </div>
+                      <p><strong>Client:</strong> {refStatus.name} ({refStatus.email})</p>
+                      {refStatus.destination && (
+                        <p><strong>Destination:</strong> {refStatus.destination} {refStatus.package ? `— ${refStatus.package}` : ''}</p>
+                      )}
+                      {refStatus.travelers && (
+                        <p><strong>Party Size & Total:</strong> {refStatus.travelers} {refStatus.totalAmount ? `• ${refStatus.totalAmount}` : ''}</p>
+                      )}
+                      {refStatus.topic && (
+                        <p><strong>Inquiry Topic:</strong> {refStatus.topic}</p>
+                      )}
+                      {refStatus.notes && (
+                        <p><strong>Submitted Request:</strong> <em>"{refStatus.notes}"</em></p>
+                      )}
+                      <p><strong>Assigned Reviewer:</strong> {refStatus.expert}</p>
+                      <p><strong>Guaranteed Response:</strong> <span style={{ color: 'var(--color-forest-emerald)', fontWeight: 700 }}>{refStatus.eta}</span></p>
+                      <p className="support-status-note">{refStatus.details}</p>
+                    </div>
+                  </>
+                ) : (
+                  <div className="support-status-details">
+                    <div className="support-status-badge" style={{ backgroundColor: '#fef2f2', color: '#b91c1c', border: '1px solid #f87171' }}>
+                      <AlertCircle size={16} /> Reference ID Not Found
+                    </div>
+                    <p style={{ margin: '6px 0 0', color: 'var(--color-deep-charcoal)', fontSize: '0.88rem' }}>
+                      {refStatus.error}
+                    </p>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -242,25 +333,83 @@ export default function Support() {
                   <CheckCircle2 size={40} />
                 </div>
                 <h2>Support Request Received</h2>
-                <p>
-                  Thank you, <strong>{ticketForm.name}</strong>. Our client care team has logged your query. Our travel experts will contact you within 24 hours at <strong>{ticketForm.email}</strong>.
+                
+                <div style={{
+                  backgroundColor: '#edf4f0',
+                  border: '1.5px solid var(--color-emerald-20)',
+                  borderRadius: 'var(--radius-lg)',
+                  padding: 'var(--space-4) var(--space-6)',
+                  margin: 'var(--space-4) auto',
+                  maxWidth: '520px'
+                }}>
+                  <span style={{
+                    fontSize: '0.8rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.08em',
+                    color: 'var(--color-sage-green)',
+                    fontWeight: 700,
+                    display: 'block',
+                    marginBottom: '4px'
+                  }}>
+                    Your Generated Support Reference ID
+                  </span>
+                  <strong style={{
+                    fontSize: '1.6rem',
+                    color: 'var(--color-forest-emerald)',
+                    letterSpacing: '0.05em',
+                    fontFamily: 'monospace'
+                  }}>
+                    {createdRef}
+                  </strong>
+                  <p style={{ fontSize: 'var(--fs-xs)', color: 'var(--color-deep-charcoal)', margin: '6px 0 0', lineHeight: 1.4 }}>
+                    Use this unique reference number anytime to track live updates from our concierge team in the tracker above.
+                  </p>
+                </div>
+
+                <p style={{ maxWidth: '560px', margin: '0 auto var(--space-4)' }}>
+                  Thank you, <strong>{ticketForm.name}</strong>. Our travel experts will contact you within 24 hours at <strong>{ticketForm.email}</strong> regarding <em>{ticketForm.topic}</em>.
                 </p>
-                <button
-                  className="btn btn-secondary btn--sm"
-                  onClick={() => {
-                    setTicketSubmitted(false);
-                    setTicketForm({
-                      name: '',
-                      email: '',
-                      topic: 'Accommodations & Room Selection',
-                      refId: '',
-                      message: '',
-                    });
-                  }}
-                  id="new-support-ticket-btn"
-                >
-                  Submit Another Query
-                </button>
+
+                <div style={{
+                  display: 'flex',
+                  gap: 'var(--space-3)',
+                  justifyContent: 'center',
+                  marginTop: 'var(--space-5)',
+                  flexWrap: 'wrap'
+                }}>
+                  <button
+                    type="button"
+                    className="btn btn-primary btn--sm"
+                    onClick={() => {
+                      setRefInput(createdRef);
+                      handleTrackRef(null, createdRef);
+                      const trackerEl = document.getElementById('support-ref-input');
+                      if (trackerEl) {
+                        trackerEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                      }
+                    }}
+                    id="track-this-ticket-now-btn"
+                  >
+                    <Search size={15} /> Track This Inquiry Now
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn--sm"
+                    onClick={() => {
+                      setTicketSubmitted(false);
+                      setTicketForm({
+                        name: '',
+                        email: '',
+                        topic: 'Accommodations & Room Selection',
+                        refId: '',
+                        message: '',
+                      });
+                    }}
+                    id="new-support-ticket-btn"
+                  >
+                    Submit Another Query
+                  </button>
+                </div>
               </div>
             ) : (
               <form onSubmit={handleTicketSubmit} noValidate className="support-ticket-form">
