@@ -15,6 +15,9 @@ html {
   font-size: 16px;
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
 }
 
 body {
@@ -26,6 +29,18 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
+  position: relative;
+}
+
+#root {
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 img, video {
@@ -73,20 +88,26 @@ p {
 /* === UTILITIES === */
 .container {
   max-width: var(--container-max);
+  width: 100%;
   margin: 0 auto;
   padding: 0 var(--container-px);
+  box-sizing: border-box;
 }
 
 .container--wide {
   max-width: var(--container-wide);
+  width: 100%;
   margin: 0 auto;
   padding: 0 var(--container-px);
+  box-sizing: border-box;
 }
 
 .container--narrow {
   max-width: var(--container-narrow);
+  width: 100%;
   margin: 0 auto;
   padding: 0 var(--container-px);
+  box-sizing: border-box;
 }
 
 .section {

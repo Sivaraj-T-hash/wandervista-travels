@@ -363,19 +363,44 @@
 }
 
 @media (max-width: 768px) {
+  .support-body {
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-12);
+  }
   .support-top-grid {
     grid-template-columns: 1fr;
+    gap: var(--space-6);
+    margin-bottom: var(--space-10);
   }
   .support-care-grid {
     grid-template-columns: 1fr;
   }
+  .support-card,
   .support-ticket-card {
     padding: var(--space-6) var(--space-4);
+    border-radius: var(--radius-lg);
   }
   .support-tracker-input-wrap {
     flex-direction: column;
   }
   .support-tracker-input-wrap button {
     width: 100%;
+  }
+  .support-banner {
+    min-height: 320px;
+  }
+  .support-banner__content {
+    padding-top: calc(var(--nav-height) + var(--space-3));
+    padding-bottom: var(--space-8);
+  }
+}
+
+@media (max-width: 480px) {
+  .support-card,
+  .support-ticket-card {
+    padding: var(--space-5) var(--space-3);
+  }
+  .support-banner__title {
+    font-size: clamp(1.75rem, 7vw, 2.3rem);
   }
 }

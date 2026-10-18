@@ -308,27 +308,14 @@ export default function Contact() {
                   <span className="section-label" style={{ color: 'var(--color-success)', fontWeight: 700 }}>
                     Enquiry Confirmed
                   </span>
-                  <h2 className="contact-confirm__title" style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.35rem)' }}>
+                  <h2 className="contact-confirm__title">
                     Thank You For Choosing Us!
                   </h2>
-                  <div style={{
-                    backgroundColor: 'var(--color-light-sage)',
-                    border: '1.5px solid var(--color-emerald-20)',
-                    borderRadius: 'var(--radius-lg)',
-                    padding: 'var(--space-4) var(--space-6)',
-                    margin: 'var(--space-4) auto var(--space-5)',
-                    maxWidth: '560px'
-                  }}>
-                    <p style={{
-                      fontSize: '1.15rem',
-                      fontWeight: 700,
-                      color: 'var(--color-forest-emerald)',
-                      lineHeight: 1.4,
-                      marginBottom: '6px'
-                    }}>
+                  <div className="contact-confirm__highlight">
+                    <p className="contact-confirm__highlight-lead">
                       Our travel experts will contact you within 24 hours.
                     </p>
-                    <p style={{ fontSize: 'var(--fs-sm)', color: 'var(--color-deep-charcoal)', margin: 0, lineHeight: 1.5 }}>
+                    <p className="contact-confirm__highlight-desc">
                       We are curating your complete worry-free itinerary — arranging your accommodations, travel (bus, flight, cab), and delicious dining so you can enjoy without thinking about travel logistics.
                     </p>
                   </div>
@@ -383,9 +370,9 @@ export default function Contact() {
                     </div>
                     <div className="contact-confirm__item">
                       <span className="contact-confirm__item-label">Estimated Expense</span>
-                      <strong className="contact-confirm__item-val" style={{ color: 'var(--color-forest-emerald)' }}>
+                      <strong className="contact-confirm__item-val contact-confirm__item-val--highlight">
                         ${submittedData.grandTotal ? submittedData.grandTotal.toLocaleString() : '—'} USD
-                        <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--color-muted-text)', fontWeight: 500 }}>
+                        <span className="contact-confirm__rate-note">
                           (${submittedData.ratePerPerson || 690}/person + 5% service & taxes)
                         </span>
                       </strong>
@@ -406,32 +393,21 @@ export default function Contact() {
 
                 {/* Calculation Quick Breakdown */}
                 {submittedInvoice && (
-                  <div style={{
-                    backgroundColor: '#f7f6f0',
-                    border: '1.5px solid var(--color-emerald-20)',
-                    borderRadius: 'var(--radius-lg)',
-                    padding: 'var(--space-4) var(--space-6)',
-                    margin: 'var(--space-6) 0',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    flexWrap: 'wrap',
-                    gap: 'var(--space-3)'
-                  }}>
-                    <div>
-                      <div style={{ fontSize: '0.82rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-sage-green)', fontWeight: 700 }}>
+                  <div className="contact-confirm__bill-summary-bar">
+                    <div className="contact-confirm__bill-summary-info">
+                      <div className="contact-confirm__bill-summary-label">
                         Professional Bill Summary Calculated
                       </div>
-                      <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--color-forest-emerald)' }}>
+                      <div className="contact-confirm__bill-summary-total">
                         ${submittedInvoice.grandTotal.toLocaleString()} USD Total for {submittedInvoice.totalTravelers} Traveler{submittedInvoice.totalTravelers !== 1 ? 's' : ''}
                       </div>
-                      <div style={{ fontSize: '0.78rem', color: 'var(--color-deep-charcoal)' }}>
+                      <div className="contact-confirm__bill-summary-sub">
                         All accommodations, transport (flight/cab/bus), dining & concierge care included.
                       </div>
                     </div>
                     <button
                       type="button"
-                      className="btn btn-primary btn--sm"
+                      className="btn btn-primary btn--sm contact-confirm__bill-summary-btn"
                       onClick={() => setShowInvoiceModal(true)}
                       id="view-bill-preview-btn"
                     >
@@ -486,7 +462,7 @@ export default function Contact() {
                   </button>
                   <Link
                     to={`/support?ref=${submittedInvoice?.id || confirmationCode}`}
-                    className="btn btn-outline btn--sm"
+                    className="btn btn-secondary btn--sm"
                     id="confirm-support-track-btn"
                   >
                     <Search size={15} /> Track in Support
@@ -502,18 +478,13 @@ export default function Contact() {
 
                 {/* Inline Printable Invoice Container */}
                 {submittedInvoice && (
-                  <div style={{ marginTop: 'var(--space-8)' }}>
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      marginBottom: 'var(--space-3)'
-                    }}>
-                      <h4 style={{ fontFamily: 'var(--font-heading)', color: 'var(--color-forest-emerald)', margin: 0 }}>
+                  <div className="contact-confirm__invoice-section">
+                    <div className="contact-confirm__invoice-section-header">
+                      <h4 className="contact-confirm__invoice-section-title">
                         Official Pro-Forma Travel Estimate & Bill
                       </h4>
                       <button
-                        className="btn btn-secondary btn--sm"
+                        className="btn btn-secondary btn--sm contact-confirm__invoice-print-btn"
                         onClick={() => window.print()}
                       >
                         <Printer size={14} /> Print Document

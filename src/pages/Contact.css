@@ -79,9 +79,11 @@
 
 .contact-grid {
   display: grid;
-  grid-template-columns: 1fr 380px;
+  grid-template-columns: minmax(0, 1fr) 380px;
   gap: var(--space-10);
   align-items: start;
+  width: 100%;
+  max-width: 100%;
 }
 
 /* === FORM CARD === */
@@ -91,6 +93,11 @@
   border: 1px solid var(--color-warm-border);
   box-shadow: var(--shadow-md);
   padding: var(--space-10) var(--space-12);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .contact-form__intro {
@@ -287,6 +294,9 @@
 /* === CONFIRMATION CARD VIEW === */
 .contact-confirm {
   animation: fadeIn 0.4s ease;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 @keyframes fadeIn {
@@ -298,6 +308,8 @@
   text-align: center;
   padding-bottom: var(--space-8);
   border-bottom: 1px solid var(--color-warm-border);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .contact-confirm__badge {
@@ -315,10 +327,38 @@
 
 .contact-confirm__title {
   font-family: var(--font-heading);
-  font-size: var(--fs-h2);
+  font-size: clamp(1.4rem, 4vw, 2.35rem);
   color: var(--color-forest-emerald);
   margin-top: var(--space-2);
   margin-bottom: var(--space-3);
+  word-break: break-word;
+}
+
+.contact-confirm__highlight {
+  background-color: var(--color-light-sage);
+  border: 1.5px solid var(--color-emerald-20);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-6);
+  margin: var(--space-4) auto var(--space-5);
+  max-width: 560px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.contact-confirm__highlight-lead {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-forest-emerald);
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+
+.contact-confirm__highlight-desc {
+  font-size: var(--fs-sm);
+  color: var(--color-deep-charcoal);
+  margin: 0;
+  line-height: 1.5;
 }
 
 .contact-confirm__sub {
@@ -326,6 +366,7 @@
   color: var(--color-deep-charcoal);
   max-width: 540px;
   margin: 0 auto var(--space-4);
+  word-break: break-word;
 }
 
 .contact-confirm__ref {
@@ -338,6 +379,10 @@
   font-size: var(--fs-sm);
   color: var(--color-forest-emerald);
   border: 1px solid var(--color-emerald-20);
+  max-width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
 .contact-confirm__ref strong {
@@ -354,6 +399,8 @@
   padding: var(--space-6);
   margin-top: var(--space-8);
   margin-bottom: var(--space-8);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .contact-confirm__summary-title {
@@ -369,12 +416,15 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: var(--space-4) var(--space-6);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .contact-confirm__item {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
 }
 
 .contact-confirm__item-label {
@@ -388,6 +438,20 @@
 .contact-confirm__item-val {
   font-size: var(--fs-sm);
   color: var(--color-deep-charcoal);
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.contact-confirm__item-val--highlight {
+  color: var(--color-forest-emerald);
+}
+
+.contact-confirm__rate-note {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--color-muted-text);
+  font-weight: 500;
+  margin-top: 2px;
 }
 
 .contact-confirm__notes {
@@ -401,11 +465,61 @@
   font-size: var(--fs-sm);
   color: var(--color-muted-text);
   margin-top: var(--space-1);
+  word-break: break-word;
+}
+
+/* Quick Bill Summary Bar */
+.contact-confirm__bill-summary-bar {
+  background-color: #f7f6f0;
+  border: 1.5px solid var(--color-emerald-20);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-6);
+  margin: var(--space-6) 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.contact-confirm__bill-summary-info {
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+.contact-confirm__bill-summary-label {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-sage-green);
+  font-weight: 700;
+}
+
+.contact-confirm__bill-summary-total {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-forest-emerald);
+  margin-top: 2px;
+  word-break: break-word;
+}
+
+.contact-confirm__bill-summary-sub {
+  font-size: 0.78rem;
+  color: var(--color-deep-charcoal);
+  margin-top: 2px;
+}
+
+.contact-confirm__bill-summary-btn {
+  white-space: nowrap;
 }
 
 /* Steps */
 .contact-confirm__steps {
   margin-bottom: var(--space-8);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .contact-confirm__steps-title {
@@ -419,6 +533,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  width: 100%;
 }
 
 .contact-step {
@@ -429,6 +544,8 @@
   border: 1px solid var(--color-warm-border);
   border-radius: var(--radius-md);
   padding: var(--space-4);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .contact-step__num {
@@ -445,6 +562,11 @@
   flex-shrink: 0;
 }
 
+.contact-step__info {
+  flex: 1;
+  min-width: 0;
+}
+
 .contact-step__info strong {
   display: block;
   font-size: var(--fs-sm);
@@ -456,6 +578,7 @@
   font-size: var(--fs-xs);
   color: var(--color-muted-text);
   line-height: 1.5;
+  margin: 0;
 }
 
 /* Confirmation actions */
@@ -467,6 +590,33 @@
   flex-wrap: wrap;
   padding-top: var(--space-6);
   border-top: 1px solid var(--color-warm-border);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Invoice Container */
+.contact-confirm__invoice-section {
+  margin-top: var(--space-8);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.contact-confirm__invoice-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+  width: 100%;
+}
+
+.contact-confirm__invoice-section-title {
+  font-family: var(--font-heading);
+  color: var(--color-forest-emerald);
+  margin: 0;
+  font-size: clamp(1.1rem, 2.5vw, 1.35rem);
 }
 
 /* === SIDEBAR === */
@@ -624,7 +774,7 @@ a.contact-channel__val:hover {
 /* === RESPONSIVE === */
 @media (max-width: 1024px) {
   .contact-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .contact-form-card {
     padding: var(--space-8) var(--space-6);
@@ -632,14 +782,129 @@ a.contact-channel__val:hover {
 }
 
 @media (max-width: 768px) {
+  .contact-body {
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-12);
+  }
+
   .form-row,
   .form-row--3 {
     grid-template-columns: 1fr;
   }
+
+  .contact-form-card {
+    padding: var(--space-6) var(--space-4);
+    border-radius: var(--radius-lg);
+  }
+
   .contact-confirm__details-grid {
     grid-template-columns: 1fr;
+    gap: var(--space-3);
   }
+
+  .contact-confirm__summary {
+    padding: var(--space-4);
+    margin-top: var(--space-5);
+    margin-bottom: var(--space-5);
+  }
+
+  .contact-confirm__highlight {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .contact-confirm__highlight-lead {
+    font-size: 1.05rem;
+  }
+
+  .contact-confirm__actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+
+  .contact-confirm__actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .contact-confirm__bill-summary-bar {
+    padding: var(--space-4);
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+
+  .contact-confirm__bill-summary-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .contact-confirm__invoice-section-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2);
+  }
+
+  .contact-confirm__invoice-section-header .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .contact-step {
+    padding: var(--space-3);
+    gap: var(--space-3);
+  }
+
   .contact-banner {
-    min-height: 360px;
+    min-height: 320px;
+  }
+
+  .contact-banner__content {
+    padding-top: calc(var(--nav-height) + var(--space-3));
+    padding-bottom: var(--space-8);
+  }
+
+  .contact-faqs-section {
+    padding: var(--space-8) var(--space-4);
+    margin-top: var(--space-10);
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-form-card {
+    padding: var(--space-5) var(--space-3);
+  }
+
+  .contact-confirm__title {
+    font-size: 1.45rem;
+  }
+
+  .contact-confirm__badge {
+    width: 54px;
+    height: 54px;
+    margin-bottom: var(--space-3);
+  }
+
+  .contact-confirm__sub {
+    font-size: var(--fs-sm);
+  }
+
+  .contact-confirm__ref {
+    font-size: var(--fs-xs);
+    padding: 0.4rem 0.85rem;
+  }
+
+  .contact-banner__title {
+    font-size: clamp(1.75rem, 7vw, 2.3rem);
+  }
+
+  .contact-info-card,
+  .contact-guarantees-card {
+    padding: var(--space-5) var(--space-4);
+  }
+
+  .style-chip-btn {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.75rem;
   }
 }
