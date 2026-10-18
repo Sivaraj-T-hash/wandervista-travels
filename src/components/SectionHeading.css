@@ -1,0 +1,49 @@
+/* =========================================
+   SECTION HEADING STYLES
+   ========================================= */
+
+.sec-heading {
+  max-width: 680px;
+}
+
+.sec-heading--center {
+  text-align: center;
+  margin: 0 auto;
+}
+
+.sec-heading--right {
+  text-align: right;
+  margin-left: auto;
+}
+
+.sec-heading__title {
+  font-family: var(--font-heading);
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-medium);
+  color: var(--color-deep-charcoal);
+  line-height: var(--lh-heading);
+  margin-bottom: var(--space-4);
+  letter-spacing: -0.01em;
+}
+
+.sec-heading--light .sec-heading__title {
+  color: var(--color-warm-ivory);
+}
+
+.sec-heading--light .section-label {
+  color: var(--color-gold-light);
+}
+
+.sec-heading--light .section-label::before {
+  background-color: var(--color-gold-light);
+}
+
+.sec-heading__subtitle {
+  font-size: var(--fs-body-lg);
+  color: var(--color-muted-text);
+  line-height: var(--lh-body);
+}
+
+.sec-heading--light .sec-heading__subtitle {
+  color: rgba(245, 241, 231, 0.72);
+}
